@@ -2,12 +2,12 @@ import React from "react";
 import axios from "axios";
 import { BrowserRouter as Router, Route, Link, Switch } from "react-router-dom";
 import { Button, Divider, Header, Container } from "semantic-ui-react";
-
 import { apiBaseUrl } from "./constants";
 import { useStateValue } from "./state";
 import { Patient } from "./types";
 
 import PatientListPage from "./PatientListPage";
+import PatientDetailView from "./components/PatientDetailView";
 
 const App: React.FC = () => {
   const [, dispatch] = useStateValue();
@@ -37,7 +37,12 @@ const App: React.FC = () => {
           </Button>
           <Divider hidden />
           <Switch>
-            <Route path="/" render={() => <PatientListPage />} />
+            <Route path="/patients/:id">
+              <PatientDetailView />
+            </Route>
+          </Switch>
+          <Switch>
+            <Route exact path="/" render={() => <PatientListPage />} />
           </Switch>
         </Container>
       </Router>
