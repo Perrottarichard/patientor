@@ -2,10 +2,19 @@ import React from 'react';
 import { useStateValue } from "../state";
 import { Grid, Button } from "semantic-ui-react";
 import { Field, Formik, Form } from "formik";
-import { TextField, DiagnosisSelection } from "../AddPatientModal/FormField";
-import { HealthCheckEntry } from '../types';
+import { TextField, DiagnosisSelection, SelectFieldEntry } from "../AddPatientModal/FormField";
+import { HealthCheckEntry, HealthCheckRating } from '../types';
+import { HealthCheckOption } from '../AddPatientModal/FormField';
 
 export type HealthCheckEntryFormValues = Omit<HealthCheckEntry, "id">;
+
+const healthCheckOptions: HealthCheckOption[] = [
+  { value: HealthCheckRating.Healthy, label: "Healthy" },
+  { value: HealthCheckRating.LowRisk, label: "Low Risk" },
+  { value: HealthCheckRating.HighRisk, label: "High Risk" },
+  { value: HealthCheckRating.CriticalRisk, label: "Critical Risk" }
+];
+
 
 export interface HealthCheckEntryProps {
   onSubmit: (values: HealthCheckEntryFormValues) => void;
@@ -23,7 +32,7 @@ const AddHealthCheckEntryForm: React.FC<HealthCheckEntryProps> = ({ onSubmit, on
         date: "",
         specialist: "",
         diagnosisCodes: [],
-        healthCheckRating: 1
+        healthCheckRating: HealthCheckRating.Healthy
 
       }}
       onSubmit={onSubmit}
@@ -74,11 +83,11 @@ const AddHealthCheckEntryForm: React.FC<HealthCheckEntryProps> = ({ onSubmit, on
               component={TextField}
             />
             {}
-            <Field
+            <SelectFieldEntry
               label="Health Check Rating"
-              placeholder="HealthCheckRating"
+              options={healthCheckOptions}
               name="healthCheckRating"
-              component={TextField}
+
             />
             <DiagnosisSelection
               setFieldValue={setFieldValue}

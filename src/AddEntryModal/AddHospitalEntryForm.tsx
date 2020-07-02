@@ -72,9 +72,15 @@ const AddHospitalEntryForm: React.FC<HospitalEntryProps> = ({ onSubmit, onCancel
                         />
                         {}
                         <Field
-                            label="Discharge"
-                            placeholder="Discharge"
-                            name="discharge"
+                            label="Discharge Date"
+                            placeholder="Discharge Date"
+                            name="discharge.date"
+                            component={TextField}
+                        />
+                        <Field
+                            label="Discharge Criteria"
+                            placeholder="Discharge Criteria"
+                            name="discharge.criteria"
                             component={TextField}
                         />
                         <DiagnosisSelection

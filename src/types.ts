@@ -28,10 +28,10 @@ interface BaseEntry {
   diagnosisCodes?: Array<Diagnosis['code']>;
 }
 export enum HealthCheckRating {
-  "Healthy" = 0,
-  "LowRisk" = 1,
-  "HighRisk" = 2,
-  "CriticalRisk" = 3
+  Healthy = "Healhy",
+  LowRisk = "LowRisk",
+  HighRisk = "HighRisk",
+  CriticalRisk = "CriticalRisk"
 }
 interface Discharge {
   date: string;
