@@ -2,43 +2,39 @@ import React from 'react';
 import { useStateValue } from "../state";
 import { Grid, Button } from "semantic-ui-react";
 import { Field, Formik, Form } from "formik";
-import { TextField, SelectFieldEntry, DiagnosisSelection, TypeOptions } from "../AddPatientModal/FormField";
-import { HealthCheckEntry } from '../types';
+import { TextField, DiagnosisSelection } from "../AddPatientModal/FormField";
+import { HospitalEntry } from '../types';
 
+export type HospitalEntryFormValues = Omit<HospitalEntry, "id">;
 
-export type EntryFormValues = Omit<HealthCheckEntry, "id">;
-
-export interface EntryProps {
-    onSubmit: (values: EntryFormValues) => void;
+export interface HospitalEntryProps {
+    onSubmit: (values: HospitalEntryFormValues) => void;
     onCancel: () => void;
 }
 
-const typeOptions: TypeOptions[] = [
-    { value: "Hospital", label: "hospital" },
-    { value: "OccupationalHealthcare", label: "occupationalHealthcare" },
-    { value: "HealthCheck", label: "healthCheck" }
-];
-
-const AddEntryForm: React.FC<EntryProps> = ({ onSubmit, onCancel }) => {
+const AddHospitalEntryForm: React.FC<HospitalEntryProps> = ({ onSubmit, onCancel }) => {
     const [{ diagnosisData }] = useStateValue();
 
     return (
         <Formik
             initialValues={{
-                type: "HealthCheck",
+                type: "Hospital",
                 description: "",
                 date: "",
                 specialist: "",
-                healthCheckRating: 1,
-                diagnosisCodes: []
+                diagnosisCodes: [],
+                discharge: {
+                    date: "",
+                    criteria: ""
+                }
 
             }}
             onSubmit={onSubmit}
             validate={values => {
                 const requiredError = "Field is required";
                 const errors: { [field: string]: string } = {};
-                if (!values.type) {
-                    errors.type = requiredError;
+                if (!values.discharge) {
+                    errors.discharge = requiredError;
                 }
                 if (!values.description) {
                     errors.description = requiredError;
@@ -49,9 +45,6 @@ const AddEntryForm: React.FC<EntryProps> = ({ onSubmit, onCancel }) => {
                 if (!values.specialist) {
                     errors.specialist = requiredError;
                 }
-                if (!values.healthCheckRating) {
-                    errors.healthCheckRating = requiredError;
-                }
                 return errors;
             }}
         >
@@ -59,11 +52,6 @@ const AddEntryForm: React.FC<EntryProps> = ({ onSubmit, onCancel }) => {
 
                 return (
                     <Form className="form ui">
-                        <SelectFieldEntry
-                            label="type"
-                            name="type"
-                            options={typeOptions}
-                        />
                         <Field
                             label="Description"
                             placeholder="Description"
@@ -82,11 +70,11 @@ const AddEntryForm: React.FC<EntryProps> = ({ onSubmit, onCancel }) => {
                             name="date"
                             component={TextField}
                         />
-
+                        {}
                         <Field
-                            label="Health Check Rating"
-                            placeholder="HealthCheckRating"
-                            name="healthCheckRating"
+                            label="Discharge"
+                            placeholder="Discharge"
+                            name="discharge"
                             component={TextField}
                         />
                         <DiagnosisSelection
@@ -118,4 +106,4 @@ const AddEntryForm: React.FC<EntryProps> = ({ onSubmit, onCancel }) => {
         </Formik>
     );
 };
-export default AddEntryForm;
+export default AddHospitalEntryForm;

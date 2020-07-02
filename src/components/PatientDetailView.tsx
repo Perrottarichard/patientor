@@ -4,21 +4,37 @@ import { useParams } from 'react-router';
 import axios from 'axios';
 import { Patient, Entry } from '../types';
 import { apiBaseUrl } from "../constants";
+import { AddHospitalEntryModal } from '../AddEntryModal';
+import { AddOccupationalHealthcareEntryModal } from '../AddEntryModal';
+import { AddHealthCheckEntryModal } from '../AddEntryModal';
 import { useStateValue } from "../state";
-import AddEntryModal from '../AddEntryModal';
-import { EntryFormValues } from '../AddEntryModal/AddEntryForm';
+import { HospitalEntryFormValues } from '../AddEntryModal/AddHospitalEntryForm';
+import { HealthCheckEntryFormValues } from '../AddEntryModal/AddHealthCheckEntryForm';
+import { OccupationalHealthcareEntryFormValues } from '../AddEntryModal/AddOccupationalHealthcareEntryForm';
 
 const PatientDetailView: React.FC = () => {
 
     const [{ singlePatient, diagnosisData }, dispatch] = useStateValue();
     const { id } = useParams<{ id: string }>();
-    const [modalOpen, setModalOpen] = React.useState<boolean>(false);
+    const [hospitalModalOpen, setHospitalModalOpen] = React.useState<boolean>(false);
+    const [healthCheckModalOpen, setHealthCheckModalOpen] = React.useState<boolean>(false);
+    const [occupationalModalOpen, setOccupationalModalOpen] = React.useState<boolean>(false);
     const [error, setError] = React.useState<string | undefined>();
 
-    const openModal = (): void => setModalOpen(true);
+    const openHospitalModal = (): void => setHospitalModalOpen(true);
+    const openHealthCheckModal = (): void => setHealthCheckModalOpen(true);
+    const openOccupationalModal = (): void => setOccupationalModalOpen(true);
 
-    const closeModal = (): void => {
-        setModalOpen(false);
+    const closeHospitalModal = (): void => {
+        setHospitalModalOpen(false);
+        setError(undefined);
+    };
+    const closeHealthCheckModal = (): void => {
+        setHealthCheckModalOpen(false);
+        setError(undefined);
+    };
+    const closeOccupationalModal = (): void => {
+        setOccupationalModalOpen(false);
         setError(undefined);
     };
 
@@ -35,14 +51,17 @@ const PatientDetailView: React.FC = () => {
         getSinglePatient(id);
         // eslint-disable-next-line
     }, []);
-    const submitNewEntry = async (values: EntryFormValues) => {
+    const submitNewEntry = async (values: HealthCheckEntryFormValues | OccupationalHealthcareEntryFormValues | HospitalEntryFormValues) => {
         try {
             const { data: newEntry } = await axios.post<Entry>(
                 `${apiBaseUrl}/patients/:id/entries`,
                 values
             );
             dispatch({ type: "ADD_ENTRY", payload: newEntry });
-            closeModal();
+            closeHospitalModal();
+            closeHealthCheckModal();
+            closeOccupationalModal();
+
         } catch (e) {
             console.error(e.response.data);
             setError(e.response.data.error);
@@ -85,12 +104,32 @@ const PatientDetailView: React.FC = () => {
         <div>
             <h1>{singlePatient?.name}{singlePatient?.gender === 'male' ? <Icon name='mars' size='big' /> : <Icon name='venus' size='big' />}</h1>
 
-            <AddEntryModal
-                modalOpen={modalOpen}
-                onSubmit={submitNewEntry}
+            <AddHospitalEntryModal
+                modalOpen={hospitalModalOpen}
+                onSubmitHealthcheck={submitNewEntry}
+                onSubmitHospital={submitNewEntry}
+                onSubmitOccupational={submitNewEntry}
                 error={error}
-                onClose={closeModal} />
-            <Button onClick={() => openModal()}>Add New Entry</Button>
+                onClose={closeHospitalModal} />
+            <Button onClick={() => openHospitalModal()}>Hospital Entry</Button>
+
+            <AddOccupationalHealthcareEntryModal
+                modalOpen={occupationalModalOpen}
+                onSubmitHealthcheck={submitNewEntry}
+                onSubmitHospital={submitNewEntry}
+                onSubmitOccupational={submitNewEntry}
+                error={error}
+                onClose={closeOccupationalModal} />
+            <Button onClick={() => openOccupationalModal()}>Occupational Healthcare</Button>
+
+            <AddHealthCheckEntryModal
+                modalOpen={healthCheckModalOpen}
+                onSubmitHealthcheck={submitNewEntry}
+                onSubmitHospital={submitNewEntry}
+                onSubmitOccupational={submitNewEntry}
+                error={error}
+                onClose={closeHealthCheckModal} />
+            <Button onClick={() => openHealthCheckModal()}>Health Check</Button>
 
             <p><strong>DOB: </strong>{singlePatient?.dateOfBirth}</p>
             <p><strong>Occupation: </strong>{singlePatient?.occupation}</p>
