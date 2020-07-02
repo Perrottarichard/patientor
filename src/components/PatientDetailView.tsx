@@ -1,15 +1,26 @@
 import React from 'react';
-import { Icon } from 'semantic-ui-react';
+import { Icon, Button } from 'semantic-ui-react';
 import { useParams } from 'react-router';
 import axios from 'axios';
 import { Patient, Entry } from '../types';
 import { apiBaseUrl } from "../constants";
 import { useStateValue } from "../state";
+import AddEntryModal from '../AddEntryModal';
+import { EntryFormValues } from '../AddEntryModal/AddEntryForm';
 
 const PatientDetailView: React.FC = () => {
 
     const [{ singlePatient, diagnosisData }, dispatch] = useStateValue();
     const { id } = useParams<{ id: string }>();
+    const [modalOpen, setModalOpen] = React.useState<boolean>(false);
+    const [error, setError] = React.useState<string | undefined>();
+
+    const openModal = (): void => setModalOpen(true);
+
+    const closeModal = (): void => {
+        setModalOpen(false);
+        setError(undefined);
+    };
 
     React.useEffect(() => {
         const getSinglePatient = async (id: string) => {
@@ -24,12 +35,23 @@ const PatientDetailView: React.FC = () => {
         getSinglePatient(id);
         // eslint-disable-next-line
     }, []);
-
+    const submitNewEntry = async (values: EntryFormValues) => {
+        try {
+            const { data: newEntry } = await axios.post<Entry>(
+                `${apiBaseUrl}/patients/:id/entries`,
+                values
+            );
+            dispatch({ type: "ADD_ENTRY", payload: newEntry });
+            closeModal();
+        } catch (e) {
+            console.error(e.response.data);
+            setError(e.response.data.error);
+        }
+    };
     const assertNever = (type: string): never => {
         console.log(type);
         throw new Error("Didn't expect to get here");
     };
-    console.log(singlePatient);
 
     const displayIcon = (entry: Entry) => {
         switch (entry.type) {
@@ -62,6 +84,13 @@ const PatientDetailView: React.FC = () => {
     return (
         <div>
             <h1>{singlePatient?.name}{singlePatient?.gender === 'male' ? <Icon name='mars' size='big' /> : <Icon name='venus' size='big' />}</h1>
+
+            <AddEntryModal
+                modalOpen={modalOpen}
+                onSubmit={submitNewEntry}
+                error={error}
+                onClose={closeModal} />
+            <Button onClick={() => openModal()}>Add New Entry</Button>
 
             <p><strong>DOB: </strong>{singlePatient?.dateOfBirth}</p>
             <p><strong>Occupation: </strong>{singlePatient?.occupation}</p>
