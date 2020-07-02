@@ -33,7 +33,7 @@ export enum HealthCheckRating {
   HighRisk = "HighRisk",
   CriticalRisk = "CriticalRisk"
 }
-interface Discharge {
+export interface Discharge {
   date: string;
   criteria: string;
 }

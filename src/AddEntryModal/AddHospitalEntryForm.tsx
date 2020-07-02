@@ -27,7 +27,6 @@ const AddHospitalEntryForm: React.FC<HospitalEntryProps> = ({ onSubmit, onCancel
                     date: "",
                     criteria: ""
                 }
-
             }}
             onSubmit={onSubmit}
             validate={values => {
@@ -70,19 +69,17 @@ const AddHospitalEntryForm: React.FC<HospitalEntryProps> = ({ onSubmit, onCancel
                             name="date"
                             component={TextField}
                         />
-                        {}
                         <Field
                             label="Discharge Date"
                             placeholder="Discharge Date"
                             name="discharge.date"
                             component={TextField}
                         />
-                        <Field
-                            label="Discharge Criteria"
+                        <Field label="Discharge Criteria"
                             placeholder="Discharge Criteria"
-                            name="discharge.criteria"
-                            component={TextField}
-                        />
+                            name='discharge.criteria'
+                            component={TextField}>
+                        </Field>
                         <DiagnosisSelection
                             setFieldValue={setFieldValue}
                             setFieldTouched={setFieldTouched}

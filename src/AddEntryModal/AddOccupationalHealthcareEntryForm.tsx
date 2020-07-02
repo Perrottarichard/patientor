@@ -88,8 +88,14 @@ const AddOccupationalHealthcareEntryForm: React.FC<OccupationalHealthcareEntryPr
             />
             <Field
               label="Sick Leave"
-              placeholder="Sick Leave"
-              name="sickLeave"
+              placeholder="Sick Leave Start Date"
+              name="sickLeave.startDate"
+              component={TextField}
+            />
+            <Field
+              label="Sick Leave"
+              placeholder="Sick Leave End Date"
+              name="sickLeave.endDate"
               component={TextField}
             />
             <DiagnosisSelection
